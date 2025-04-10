@@ -6,6 +6,8 @@ import * as defaultServer from "./default-server";
 
 const https = require("https");
 const fs = require("fs");
+const dotenv = require("dotenv");
+dotenv.config();
 
 defaultServer.start(function (err: Error, app: express.Express) {
   if (err) {
@@ -16,6 +18,7 @@ defaultServer.start(function (err: Error, app: express.Express) {
   const defaultPort: number = httpsEnabled ? 8443 : 3000;
 
   const port: number = Number(process.env.API_PORT) || Number(process.env.PORT) || defaultPort;
+  const host: string = process.env.API_HOST || "localhost";
   let server: any;
 
   if (httpsEnabled) {
@@ -24,12 +27,12 @@ defaultServer.start(function (err: Error, app: express.Express) {
       cert: fs.readFileSync("./certs/cert.crt", "utf8"),
     };
 
-    server = https.createServer(options, app).listen(port, function () {
-      console.log("API host listening at https://localhost:" + port);
+    server = https.createServer(options, app).listen(host, port, function () {
+      console.log(`API host listening at https://:${host}:${port}`);
     });
   } else {
     server = app.listen(port, function () {
-      console.log("API host listening at http://localhost:" + port);
+      console.log(`API host listening at http://${host}:${port}`);
     });
   }
 
