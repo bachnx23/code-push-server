@@ -41,22 +41,24 @@ export function start(done: (err?: any, server?: express.Express, storage?: Stor
 
   q<void>(null)
     .then(async () => {
-      if (useJsonStorage) {
-        storage = new JsonStorage();
-      } else if (!process.env.AZURE_KEYVAULT_ACCOUNT) {
-        storage = new AzureStorage();
-      } else {
-        isKeyVaultConfigured = true;
+      storage = new JsonStorage();
+      
+      // if (useJsonStorage) {
+      //   storage = new JsonStorage();
+      // } else if (!process.env.AZURE_KEYVAULT_ACCOUNT) {
+      //   storage = new AzureStorage();
+      // } else {
+      //   isKeyVaultConfigured = true;
 
-        const credential = new DefaultAzureCredential();
+      //   const credential = new DefaultAzureCredential();
 
-        const vaultName = process.env.AZURE_KEYVAULT_ACCOUNT;
-        const url = `https://${vaultName}.vault.azure.net`;
+      //   const vaultName = process.env.AZURE_KEYVAULT_ACCOUNT;
+      //   const url = `https://${vaultName}.vault.azure.net`;
 
-        const keyvaultClient = new SecretClient(url, credential);
-        const secret = await keyvaultClient.getSecret(`storage-${process.env.AZURE_STORAGE_ACCOUNT}`);
-        storage = new AzureStorage(process.env.AZURE_STORAGE_ACCOUNT, secret);
-      }
+      //   const keyvaultClient = new SecretClient(url, credential);
+      //   const secret = await keyvaultClient.getSecret(`storage-${process.env.AZURE_STORAGE_ACCOUNT}`);
+      //   storage = new AzureStorage(process.env.AZURE_STORAGE_ACCOUNT, secret);
+      // }
     })
     .then(() => {
       const app = express();
